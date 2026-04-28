@@ -29,45 +29,69 @@ all: advanced
 
 # --- 주요 타겟 규칙 ---
 
-# 1. Simple GC 버전 
+# 1. Simple test 버전 (단일 스레드, 단일 GC)
 simple:
 	$(CC) $(CFLAGS) -o simple_gc_test $(SIMPLE_TEST) $(SIMPLE_GC_SRC) $(LDFLAGS)
 	@echo "Built: simple_gc_test"
 
-# 2. Advanced GC 버전 (AVL 기반) [cite: 2]
+simple_advanced:
+	$(CC) $(CFLAGS) -o simple_advanced_gc_test $(SIMPLE_TEST) $(ADVANCED_GC_SRC) $(LDFLAGS)
+	@echo "Built: simple_advanced_gc_test"
+
+simple_tlab:
+	$(CC) $(CFLAGS) -o simple_tlab_gc_test $(SIMPLE_TEST) $(TLAB_GC_SRC) $(LDFLAGS)
+	@echo "Built: simple_tlab_gc_test"
+
+simple_tlab_advanced:
+	$(CC) $(CFLAGS) -o simple_tlab_advanced_gc_test $(SIMPLE_TEST) $(TLAB_ADVANCED_GC_SRC) $(LDFLAGS)
+	@echo "Built: simple_tlab_advanced_gc_test"
+
+simple_tlab_extreme:
+	$(CC) $(CFLAGS) -DUSE_THREAD_LOCAL_GC -o simple_tlab_extreme_gc_test $(SIMPLE_TEST) $(TLAB_EXTREME_GC_SRC) $(LDFLAGS) -ldl
+	@echo "Built: simple_tlab_extreme_gc_test"
+
+simple_boehm:
+	$(CC) $(CFLAGS) -DUSE_BOEHM_GC -o simple_boehm_gc_test $(SIMPLE_TEST) -lgc $(LDFLAGS)
+	@echo "Built: simple_boehm_gc_test"
+
+# 2. thread test 버전 (멀티 스레드, 다양한 GC)
 advanced:
 	$(CC) $(CFLAGS) -o advanced_gc_test $(THREAD_TEST) $(ADVANCED_GC_SRC) $(LDFLAGS)
 	@echo "Built: advanced_gc_test"
 
-# 3. TLAB GC 버전 [cite: 3]
 tlab:
 	$(CC) $(CFLAGS) -o tlab_gc_test $(THREAD_TEST) $(TLAB_GC_SRC) $(LDFLAGS)
 	@echo "Built: tlab_gc_test"
 
-# 4. TLAB Advanced GC 버전 [cite: 4]
 tlab_advanced:
 	$(CC) $(CFLAGS) -o tlab_advanced_gc_test $(THREAD_TEST) $(TLAB_ADVANCED_GC_SRC) $(LDFLAGS)
 	@echo "Built: tlab_advanced_gc_test"
 
-# 5. TLAB Extreme GC 버전 (Aggressive 최적화) [cite: 5]
 tlab_extreme:
 	$(CC) $(CFLAGS) -DUSE_THREAD_LOCAL_GC -o tlab_extreme_gc_test $(THREAD_TEST) $(TLAB_EXTREME_GC_SRC) $(LDFLAGS) -ldl
 	@echo "Built: tlab_extreme_gc_test"
 
-# 6. Commercial Boehm GC 버전 [cite: 5]
 boehm:
-	$(CC) $(CFLAGS) -o boehm_gc_test $(BOEHM_TEST) -lgc $(LDFLAGS)
+	$(CC) $(CFLAGS) -DUSE_BOEHM_GC -o boehm_gc_test $(THREAD_TEST) -lgc $(LDFLAGS)
 	@echo "Built: boehm_gc_test"
 
-# --- 시뮬레이션 및 그래프 테스트 타겟 --- [cite: 7]
+# 3. 시뮬레이션 및 그래프 테스트 타겟
 
 sim_new:
 	$(CC) $(CFLAGS) -DUSE_THREAD_LOCAL_GC -o sim_new_test $(SERVER_SIM_TEST) $(TLAB_EXTREME_GC_SRC) $(LDFLAGS) -ldl
 	@echo "Built: sim_new_test"
 
+sim_boehm:
+	$(CC) $(CFLAGS) -DUSE_BOEHM_GC -o sim_boehm_test $(SERVER_SIM_TEST) -lgc $(LDFLAGS)
+	@echo "Built: sim_boehm_test"
+
 graph_new:
 	$(CC) $(CFLAGS) -DUSE_THREAD_LOCAL_GC -o graph_new_test $(SHARED_GRAPH_TEST) $(TLAB_EXTREME_GC_SRC) $(LDFLAGS) -ldl
 	@echo "Built: graph_new_test"
+
+graph_boehm:
+	$(CC) $(CFLAGS) -DUSE_BOEHM_GC -o graph_boehm_test $(SHARED_GRAPH_TEST) -lgc $(LDFLAGS)
+	@echo "Built: graph_boehm_test"
 
 # --- 정리 및 도구 --- 
 
